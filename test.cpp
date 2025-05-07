@@ -33,6 +33,10 @@ TEST_CASE("SquareMat basic arithmetic operators") {
     CHECK(scaled[0][0] == 2);
     CHECK(scaled[1][1] == 8);
 
+    SquareMat scaled2 = 2.0 * a;
+    CHECK(scaled2[0][0] == 2);
+    CHECK(scaled2[1][1] == 8);
+
     SquareMat modmat = a % b;
     CHECK(modmat[0][0] == 1);  
 
@@ -95,10 +99,27 @@ TEST_CASE("SquareMat basic arithmetic operators") {
     CHECK_FALSE(a > equal);
     CHECK(a >= equal);
 
-    double norm = !a;
-    CHECK(norm >= 0);
+}
+TEST_CASE("Determinant of 1x1 matrix") {
+    SquareMat mat(1);
+    mat[0][0] = 5;
+    CHECK(!mat == doctest::Approx(5.0));
+}
 
-    std::ostringstream oss;
-    oss << a;
-    CHECK(!oss.str().empty());
+TEST_CASE("Determinant of 2x2 matrix") {
+    SquareMat mat(2);
+    mat[0][0] = 4; mat[0][1] = 6;
+    mat[1][0] = 3; mat[1][1] = 8;
+    // det = 4*8 - 6*3 = 32 - 18 = 14
+    CHECK(!mat == doctest::Approx(14.0));
+}
+
+TEST_CASE("Determinant of 3x3 matrix") {
+    SquareMat mat(3);
+    mat[0][0] = 6; mat[0][1] = 1; mat[0][2] = 1;
+    mat[1][0] = 4; mat[1][1] = -2; mat[1][2] = 5;
+    mat[2][0] = 2; mat[2][1] = 8; mat[2][2] = 7;
+    // det = 6*(-2*7 - 5*8) - 1*(4*7 - 5*2) + 1*(4*8 - (-2)*2)
+    // det = 6*(-14 - 40) - (28 - 10) + (32 + 4) = 6*(-54) - 18 + 36 = -324 - 18 + 36 = -306
+    CHECK(!mat == doctest::Approx(-306.0));
 }

@@ -45,6 +45,8 @@ namespace MyMath {
             SquareMat& operator%=(int scalar);
             SquareMat& operator/=(double scalar);
 
+            double sum() const;
+
             bool operator==(const SquareMat& other) const;
             bool operator!=(const SquareMat& other) const;
             bool operator<(const SquareMat& other) const;

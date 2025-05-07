@@ -143,19 +143,30 @@ namespace MyMath {
     }
 
     SquareMat SquareMat::operator^(unsigned int power) const {
-        SquareMat result(n);
-        for (int i = 0; i < n; ++i) {
-            result.data[i][i] = 1.0;
+        SquareMat result(n); 
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0;j < n; j ++)
+            {
+                if(i==j) 
+                    result.data[i][j] = 1.0;
+                else
+                result.data[i][j] = 0.0;
+            }
+            
         }
         SquareMat base = *this;
-        while (power) {
+
+        while (power > 0) {
             if (power % 2 == 1) {
                 result = result * base;
             }
             base = base * base;
             power /= 2;
         }
+
         return result;
+
     }
 
     SquareMat& SquareMat::operator++() {
@@ -232,16 +243,18 @@ namespace MyMath {
         *this = *this / scalar;
         return *this;
     }
-
-    bool SquareMat::operator==(const SquareMat& other) const {
+    double SquareMat::sum() const{
+        double sum = 0.0;
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {
-                if (data[i][j] != other.data[i][j]) {
-                    return false;
-                }
+                sum += data[i][j];
             }
         }
-        return true;
+        return sum;
+    }
+
+    bool SquareMat::operator==(const SquareMat& other) const {
+        return(sum() == other.sum());
     }
 
     bool SquareMat::operator!=(const SquareMat& other) const {
@@ -249,14 +262,7 @@ namespace MyMath {
     }
 
     bool SquareMat::operator<(const SquareMat& other) const {
-        for (int i = 0; i < n; ++i) {
-            for (int j = 0; j < n; ++j) {
-                if (data[i][j] >= other.data[i][j]) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return(sum() < other.sum());
     }
 
     bool SquareMat::operator<=(const SquareMat& other) const {
@@ -272,13 +278,22 @@ namespace MyMath {
     }
 
     double SquareMat::operator!() const {
-        double sum = 0.0;
+        if (n == 1) 
+            return data[0][0];
+        double det = 0;
         for (int i = 0; i < n; ++i) {
-            for (int j = 0; j < n; ++j) {
-                sum += data[i][j];
+            SquareMat tempMat(n - 1);
+            for (int k = 1; k < n; ++k) {
+                int col = 0;
+                for (int j = 0; j < n; ++j) {
+                    if (j == i) continue;
+                        tempMat.data[k - 1][col++] = data[k][j];
+                }
             }
+            det += (i % 2 == 0 ? 1 : -1) * data[0][i] * !tempMat;
         }
-        return sum;
+        return det;
+       
     }
 
     std::ostream& operator<<(std::ostream& os, const SquareMat& mat) {
